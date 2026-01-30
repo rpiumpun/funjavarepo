@@ -18,5 +18,7 @@ public class App {
 
         window.setLocationRelativeTo(null); //makes it at center 
         window.setVisible(true);
+
+        gamePanel.startGameThread();
     }
 }
