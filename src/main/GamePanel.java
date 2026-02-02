@@ -1,5 +1,8 @@
+package main;
 
 import javax.swing.JPanel;
+
+import entity.Player;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,7 +14,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int originalFileSize = 16; //16x16 tile
     final int scale = 3; //multilier of file size
 
-    final int tileSize = originalFileSize * scale; // we use 48x48 tile
+    public final int tileSize = originalFileSize * scale; // we use 48x48 tile
     final int maxScreenColumn = 16;
     final int maxScreenRow = 12;
     final int screenWidth = tileSize * maxScreenColumn; //768
@@ -22,6 +25,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
+    Player player = new Player(this, keyH);
 
     //Setplayers Default position
     int playerX = 100;
@@ -93,6 +97,7 @@ public class GamePanel extends JPanel implements Runnable{
             timer += currentTime - lastTime;
             lastTime = currentTime;
 
+            //things to put in cycle put in here
             if(delta >= 1){
                 update();
                 repaint();
@@ -111,18 +116,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update(){
 
-        if(keyH.upPressed == true){
-            playerY -= playerSpeed;
-        }
-        else if(keyH.downPressed == true){
-            playerY += playerSpeed;
-        }
-        else if(keyH.leftPressed == true){
-            playerX -= playerSpeed;
-        }
-        else if(keyH.rightPressed == true){
-            playerX += playerSpeed;
-        }
+        player.update();
     }
 
     public void paintComponent(Graphics g){
@@ -131,8 +125,7 @@ public class GamePanel extends JPanel implements Runnable{
         
         Graphics2D g2 = (Graphics2D)g; //graphic2d extending graphics give more stuff todo :D
 
-        g2.setColor(Color.white);
-        g2.fillRect(playerX, playerY, tileSize, tileSize);
+        player.draw(g2);
         g2.dispose();//dispose of this graphic content and release any system resource that is using
     }
 }
