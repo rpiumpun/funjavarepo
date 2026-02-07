@@ -3,6 +3,7 @@ package main;
 import javax.swing.JPanel;
 
 import entity.Player;
+import tile.TileManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,22 +16,20 @@ public class GamePanel extends JPanel implements Runnable{
     final int scale = 3; //multilier of file size
 
     public final int tileSize = originalFileSize * scale; // we use 48x48 tile
-    final int maxScreenColumn = 16;
-    final int maxScreenRow = 12;
+    public final int maxScreenColumn = 16;
+    public final int maxScreenRow = 12;
     final int screenWidth = tileSize * maxScreenColumn; //768
     final int screenHeight = tileSize * maxScreenRow; //576
 
     //FPS
     int FPS = 60;
 
+    TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
     Player player = new Player(this, keyH);
 
     //Setplayers Default position
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
 
     public GamePanel() {
 
@@ -125,7 +124,10 @@ public class GamePanel extends JPanel implements Runnable{
         
         Graphics2D g2 = (Graphics2D)g; //graphic2d extending graphics give more stuff todo :D
 
+        tileM.draw(g2);
+
         player.draw(g2);
+
         g2.dispose();//dispose of this graphic content and release any system resource that is using
     }
 }
