@@ -1,15 +1,8 @@
 {
-    "classPaths": [
-        "bin",
-        "res"
-    ],
-    "configurations": [
-        {
-            "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "main.App",
-            "projectName": "firstproject_aca6e650"
-        }
-    ]
+  "type": "java",
+  "name": "App",
+  "request": "launch",
+  "mainClass": "main.App",
+  "cwd": "${workspaceFolder}",
+  "classPaths": ["${workspaceFolder}/bin"]
 }

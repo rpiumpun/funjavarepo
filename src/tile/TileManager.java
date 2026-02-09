@@ -21,22 +21,31 @@ public class TileManager {
         this.gp = gp;
 
         tile = new Tile[10];
-        mapTileNum = new int[gp.maxScreenColumn][gp.maxScreenRow];
+        mapTileNum = new int[gp.maxWorldColumn][gp.maxWorldRow];
 
         getTileImage();
-        loadMap("/maps/map01.txt");
+        loadMap("/res/maps/map01.txt");
     }
 
     public void getTileImage(){
         try{
             tile[0] = new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/tiles/grass.png"));
+            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/grass.png"));
 
             tile[1] = new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/tiles/wall.png"));
+            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall.png"));
 
             tile[2] = new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/tiles/water.png"));
+            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/water.png"));
+
+            tile[3] = new Tile();
+            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/earth.png"));
+
+            tile[4] = new Tile();
+            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/tree.png"));
+
+            tile[5] = new Tile();
+            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/sand.png"));
 
         }catch(IOException e){
             e.printStackTrace();
@@ -48,25 +57,26 @@ public class TileManager {
             if (is == null) {
                 throw new RuntimeException("Cannot find /maps/map01.txt (check resources path)");
             }
+            
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             int col = 0;
             int row = 0;
 
-            while(col < gp.maxScreenColumn && row < gp.maxScreenRow){
+            while(col < gp.maxWorldColumn && row < gp.maxWorldRow){
 
                 String line = br.readLine();
 
-                while(col < gp.maxScreenColumn){
+                while(col < gp.maxWorldColumn){
                     String numbers[] = line.split(" ");
 
                     int num = Integer.parseInt(numbers[col]);
-                    System.out.println(num);
+                    //System.out.println(num);
 
                     mapTileNum[col][row] = num;
                     col++;
                 } 
-                if(col == gp.maxScreenColumn){
+                if(col == gp.maxWorldColumn){
                     col = 0;
                     row++;
                 }
@@ -79,25 +89,37 @@ public class TileManager {
 
     public void draw(Graphics2D g2){
         
-        int col = 0;
-        int row = 0;
-        int x = 0;
-        int y = 0;
+        int worldCol = 0;
+        int worldRow = 0;
 
-        while(col < gp.maxScreenColumn && row < gp.maxScreenRow){
 
-            int tileNum = mapTileNum[col][row]; 
+        while(worldCol < gp.maxWorldColumn && worldRow < gp.maxWorldRow){
+
+            int tileNum = mapTileNum[worldCol][worldRow]; 
+
+            //camera
+            int worldX = worldCol * gp.tileSize;
+            int worldY = worldRow * gp.tileSize;
+            int screenX = worldX - gp.player.worldX + gp.player.screenX; //subtract world tile with player to make it coodiinate
+            int screenY = worldY - gp.player.worldY + gp.player.screenY; // add player.screenXY to make the screen also center
 
             //System.out.println(tileNum);
-            g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
-            col++;
-            x += gp.tileSize;
 
-            if(col == gp.maxScreenColumn){
-                col = 0;
-                x = 0;
-                row++;
-                y += gp.tileSize;
+            //+ 1 tile to prevent black background when drawing
+            // draw only tiles near the player to max performance
+            if( worldX + gp.tileSize > gp.player.worldX - gp.player.screenX && 
+                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX && 
+                worldY + gp.tileSize > gp.player.worldY - gp.player.screenY && 
+                worldY - gp.tileSize < gp.player.worldY + gp.player.screenY){
+                
+                g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            }
+
+            worldCol++;
+
+            if(worldCol == gp.maxWorldColumn){
+                worldCol = 0;
+                worldRow++;
             }
         } 
     }
